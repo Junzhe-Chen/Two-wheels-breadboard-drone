@@ -12,27 +12,31 @@ The two wheel car is built onto a small breadboard, with an Arduino Uno attached
 
 # Basic structure
 
-The motor is composed of 4 parts:
+The drone looks like this:
+
+![Overview of the drone](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/d2e335e0-daa4-4085-9b6e-9183a21fcb0b)
+
+The drone is composed of 4 parts:
 
 - 9V battery as the power source
 
-![PXL_20230817_164713843.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0b25c2a4-79f2-4fc7-ab1b-9d2189e162ba/PXL_20230817_164713843.jpg)
+![9V battery power](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/c2495dcd-1f37-479c-8c85-64f0554d14f3)
 
 - Arduino Uno R3 for the control
 
-![PXL_20230817_164914599.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2825525e-5cb5-41b4-a0e1-02e40fcc6559/PXL_20230817_164914599.jpg)
+![Arduino UNO](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/cde8a05c-6a6d-4efb-8732-69b346429bc8)
 
 - Breadboard for attaching electrical components
 
-![PXL_20230817_164824961.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/added57a-2062-4edc-86ad-b1ac15f71bda/PXL_20230817_164824961.jpg)
+![Breadboard](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/cc81d78b-4a6b-4593-badd-5b5cbb51727e)
 
 - motors that makes the robot move
 
-![PXL_20230817_164800716.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cec0afee-a7b5-4e06-b92b-3dc679c992b1/PXL_20230817_164800716.jpg)
+![Motor](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/ec2e96c8-bb13-4be1-ae9d-b7642e728f4e)
 
-I tried to print out the wheel on a 3D printer, then I screwed up…
+I tried to print out the wheel on a 3D printer, then I screwed up… **Bruh**
 
-![PXL_20230817_163803676.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dcc45d73-99c1-419b-a6cd-ad0122175a4d/PXL_20230817_163803676.jpg)
+![Failed 3D printing residue](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/ba81d655-7e75-453b-8d18-e79dcfe0618b)
 
 If the wheel is designed to be 3D printed out, one thing to keep notice that is the wheel should have abundance contact with the plate of the 3D printer, which ensures the print stays in its place while printing. My first print has relatively thin structure (to save material) which does not provide enough contact area to the plate, causing the print to fail eventually. 
 
@@ -59,6 +63,22 @@ DC motor is relatively easy to control, if you provide the rated voltage across 
 
 H bridge is a useful circuit that can change the polarity of the component connecting in the middle of the bridge. [insert many figures and explanations]
 
+H bridge driver
+![H bridge overview](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/52ffa30f-411e-4416-baa6-a3185be22bc6)
+
+H bridge, M1 and M4 conducting
+![H bridge case 1](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/e42908ea-c051-4bfc-aaef-6c575560ac44)
+
+H bridge, M2 and M3 conducting
+![H bridge case 2](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/8841472c-6fc0-4e51-8571-71b0ba703bf7)
+
+H bridge, STOP
+![H bridge case STOP](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/67e44c97-c2d9-426a-9515-2d747f8d9e9d)
+
+H bridge with potection diode
+![H bridge flyback diode](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/a7cf1098-ed70-4a7f-9c05-377c38c7f392)
+
+
 ### Inductor “kick” and flyback diode
 
 Inductor is a quite interesting component, which when a current passing through it, magnetic field around the inductor began to build up. If there is a sudden change of current such as suddenly cutting off the voltage across the inductor, the magnetic field will collapse and turn it into current. The fundamental principle for inductor can be quite hard to explain, for the math fan here, the current voltage relationship on a inductor can be written as  
@@ -69,7 +89,7 @@ $$
 
 It can be understood as inductor doesn’t like sudden change, in another word, resists change. If you apply sudden change to an inductor, it will kick you back really REALLY hard. There is actually a law that define this characteristics called [Lenz’s Law](https://en.wikipedia.org/wiki/Lenz%27s_law).
 
-However, sometimes we DO need to make instance change in voltage across the motor (which is mainly inductive), then where should those kickback voltage go? That is when the use of Flyback diode comes in [insert picture in ******************Art of Electronics 3rd Edition p. 39******************] 
+However, sometimes we DO need to make instance change in voltage across the motor (which is mainly inductive), then where should those kickback voltage go? That is when the use of Flyback diode comes in [insert picture in *Art of Electronics 3rd Edition p. 39*] 
 
 ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/85c7c55f-308a-442e-b645-1d273a291553/Untitled.png)
 
