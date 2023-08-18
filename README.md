@@ -110,7 +110,7 @@ Figure 1.84 shows a good example of the flyback diode. This basically gives the 
 In order to make the robot avoid obstacle, we need some sort of sensor that can be used to detect the distance between the robot and the surrounding. For this specific use case, the following sensor can be chosen:
 
 - Ultrasonic sensor
-    - Relatively cheap and easy-to-use, limited range (till around 2m), limited speed, take extra caution about the glitch when the sensor is too close to the wall
+    - Relatively cheap and easy-to-use, limited range (till around 0.5m), limited speed, take extra caution about the glitch when the sensor is too close to the wall
 - IR sensor
     - Great accuracy and speed, limited range (depending to the ambient light) and light dependant, not that great for this use case
 - LiDAR
