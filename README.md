@@ -78,6 +78,13 @@ H bridge, STOP
 H bridge with potection diode
 ![H bridge flyback diode](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/a7cf1098-ed70-4a7f-9c05-377c38c7f392)
 
+| A    | B    | Direction     |
+|------|------|---------------|
+| LOW  | LOW  | BRAKE         |
+| LOW  | HIGH | CLOCKWISE     |
+| HIGH | LOW  | ANTICLOCKWISE |
+| HIGH | HIGH | BRAKE         |
+
 
 ### Inductor “kick” and flyback diode
 
@@ -89,9 +96,12 @@ $$
 
 It can be understood as inductor doesn’t like sudden change, in another word, resists change. If you apply sudden change to an inductor, it will kick you back really REALLY hard. There is actually a law that define this characteristics called [Lenz’s Law](https://en.wikipedia.org/wiki/Lenz%27s_law).
 
-However, sometimes we DO need to make instance change in voltage across the motor (which is mainly inductive), then where should those kickback voltage go? That is when the use of Flyback diode comes in [insert picture in *Art of Electronics 3rd Edition p. 39*] 
+However, sometimes we DO need to make instance change in voltage across the motor (which is mainly inductive), then where should those kickback voltage go? That is when the use of Flyback diode comes in. The following picture from *Art of Electronics* gives a intuitive explanation of why we need a flyback diode for inductive load:
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/85c7c55f-308a-442e-b645-1d273a291553/Untitled.png)
+![flyback diode art of electronics](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/25933043-e56f-4ef5-8909-7fe1270b7b2f)
+
+> When the switch is opened, the inductor tries to keep current flowing from A to B, as it had been. In other words, it tries to make current flow out of B, which it does by forcing B to a high positive voltage (relative to A). In a case like this, in which there’s no connection to terminal B, it may go 1000 V positive before the switch contact “blows over.” This shortens the life of the switch and also generates impulsive interference that may affect other circuits nearby. If the switch happens to be a transistor, it would be an understatement to say that its life is shortened; its life is ended. Horowitz, Paul *Art of Electronics, p.39*
+>
 
 Figure 1.84 shows a good example of the flyback diode. This basically gives the vague idea of where the diode should be in the H bridge. Do consider about the motor works in both polarity so in total of 4 diodes is needed to fully protect the transistors not being blown up by the motor’s inductive kick.
 
@@ -125,25 +135,25 @@ where $d$ represents the distance between the sensor and the obstacle, $t$ is th
 
 By using this principle, we can write following codes in Arduino to sense the distance between the sensor and the obstacle.
 
-```arduino
+```c++
 void distance_measurement() {
     if (millis() > currentMillis + 100) {  // Distance measurement in every 100 milliseconds
-      currentMillis = millis();
-     
-			// generate 10-microsecond pulse to TRIG pin
-      digitalWrite(ULTRASONIC_TRIGGER_PIN, HIGH);
-      delayMicroseconds(10); 
-      digitalWrite(ULTRASONIC_TRIGGER_PIN, LOW);
+      	currentMillis = millis();
 
-      // measure duration of pulse from ECHO pin
-      duration_us = pulseIn(ULTRASONIC_ECHO_PIN, HIGH);
+	// generate 10-microsecond pulse to TRIG pin
+      	digitalWrite(ULTRASONIC_TRIGGER_PIN, HIGH);
+      	delayMicroseconds(10); 
+      	digitalWrite(ULTRASONIC_TRIGGER_PIN, LOW);
 
-      // calculate the distance
-      distance_cm = 0.017 * duration_us; // Formular that is mentioned before
-      Serial.println("distance: ");
-      Serial.print(distance_cm);
-      // return distance_cm;
-      // print the value to Serial Monitor
+      	// measure duration of pulse from ECHO pin
+      	duration_us = pulseIn(ULTRASONIC_ECHO_PIN, HIGH);
+
+      	// calculate the distance
+      	distance_cm = 0.017 * duration_us; // Formular that is mentioned before
+      	Serial.println("distance: ");
+      	Serial.print(distance_cm);
+      	// return distance_cm;
+      	// print the value to Serial Monitor
     }
   }
 ```
