@@ -1,9 +1,9 @@
 // **************************************************************************************************
 // Constants
-const int LEFT_MOTOR_PIN1 = 5;
-const int LEFT_MOTOR_PIN2 = 6;
-const int RIGHT_MOTOR_PIN1 = 9;
-const int RIGHT_MOTOR_PIN2 = 10;
+const int LEFT_MOTOR_PIN_A = 5;
+const int LEFT_MOTOR_PIN_B = 6;
+const int RIGHT_MOTOR_PIN_A = 9;
+const int RIGHT_MOTOR_PIN_B = 10;
 const int ULTRASONIC_TRIGGER_PIN = 7;
 const int ULTRASONIC_ECHO_PIN = 8;
 // Variables
@@ -18,8 +18,10 @@ const int DISTANCE_UPPER_BOUNDARY = 20;  // Set the upper boundary between the d
 
 void setup() {
   // This part is for setting up the Arduino pins and serial connection, please keep it unchanged
-  pinMode(LEFT_MOTOR_PIN1, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN1, OUTPUT);
+  pinMode(LEFT_MOTOR_PIN_A, OUTPUT);
+  pinMode(LEFT_MOTOR_PIN_B, OUTPUT);
+  pinMode(RIGHT_MOTOR_PIN_A, OUTPUT);
+  pinMode(RIGHT_MOTOR_PIN_B, OUTPUT);
   pinMode(ULTRASONIC_TRIGGER_PIN, OUTPUT);
   pinMode(ULTRASONIC_ECHO_PIN, INPUT);
   Serial.begin(9600);
@@ -29,7 +31,7 @@ void setup() {
 // ******************************************************************************************************
 void loop() {
   distance_measurement();
-  distance_maintaining_logic();
+  // distance_maintaining_logic();
 }
 // ******************************************************************************************************
 
@@ -37,44 +39,44 @@ void loop() {
 // ******************************************************************************************************
 void forward() {
   // Function that moves the robot forward
-  analogWrite(LEFT_MOTOR_PIN1, FORWARD_SPEED);
-  digitalWrite(LEFT_MOTOR_PIN2, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
-  analogWrite(RIGHT_MOTOR_PIN1, FORWARD_SPEED);
+  analogWrite(LEFT_MOTOR_PIN_A, FORWARD_SPEED);
+  digitalWrite(LEFT_MOTOR_PIN_B, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN_A, LOW);
+  analogWrite(RIGHT_MOTOR_PIN_B, FORWARD_SPEED);
 }
 
 // ******************************************************************************************************
 void backward() {
   // Function that moves the robot backward
-  digitalWrite(LEFT_MOTOR_PIN1, LOW);
-  analogWrite(LEFT_MOTOR_PIN2, BACKWARD_SPEED);
-  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
-  analogWrite(RIGHT_MOTOR_PIN2, BACKWARD_SPEED);
+  digitalWrite(LEFT_MOTOR_PIN_A, LOW);
+  analogWrite(LEFT_MOTOR_PIN_B, BACKWARD_SPEED);
+  digitalWrite(RIGHT_MOTOR_PIN_A, LOW);
+  analogWrite(RIGHT_MOTOR_PIN_B, BACKWARD_SPEED);
 }
 
 // ******************************************************************************************************
 void left_spin() {
   // Function that makes the robot spin to the left direction
-  digitalWrite(LEFT_MOTOR_PIN1, LOW);
-  analogWrite(LEFT_MOTOR_PIN2, FORWARD_SPEED);
-  analogWrite(RIGHT_MOTOR_PIN1, FORWARD_SPEED);
-  digitalWrite(RIGHT_MOTOR_PIN2, LOW);
+  digitalWrite(LEFT_MOTOR_PIN_A, LOW);
+  analogWrite(LEFT_MOTOR_PIN_B, FORWARD_SPEED);
+  analogWrite(RIGHT_MOTOR_PIN_A, FORWARD_SPEED);
+  digitalWrite(RIGHT_MOTOR_PIN_B, LOW);
 }
 
 // ******************************************************************************************************
 void right_spin() {
   // Function that makes the robot spin to the right direction
-  analogWrite(LEFT_MOTOR_PIN1, FORWARD_SPEED);
-  digitalWrite(LEFT_MOTOR_PIN2, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
-  analogWrite(RIGHT_MOTOR_PIN2, FORWARD_SPEED);
+  analogWrite(LEFT_MOTOR_PIN_A, FORWARD_SPEED);
+  digitalWrite(LEFT_MOTOR_PIN_B, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN_A, LOW);
+  analogWrite(RIGHT_MOTOR_PIN_B, FORWARD_SPEED);
 }
 
 void STOP() {
-  digitalWrite(LEFT_MOTOR_PIN1, LOW);
-  digitalWrite(LEFT_MOTOR_PIN2, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN1, LOW);
+  digitalWrite(LEFT_MOTOR_PIN_A, LOW);
+  digitalWrite(LEFT_MOTOR_PIN_B, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN_A, LOW);
+  digitalWrite(RIGHT_MOTOR_PIN_B, LOW);
 }
 // ***** Missing left and right turn by setting differential speed ***** //
 
@@ -105,8 +107,10 @@ void distance_measurement() {
 void distance_maintaining_logic() {
   if (distance_cm < 5) {
     backward();
+    Serial.println(">>>Going back");
   } else if (distance_cm > 7) {
     forward();
+    Serial.println(">>>Going forward");
   } else {
     STOP();
   }
