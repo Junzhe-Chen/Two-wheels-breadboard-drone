@@ -11,8 +11,8 @@ float duration_us, distance_cm;
 unsigned long startMillis;
 unsigned long currentMillis;
 // **************************************************************************************************
-const int FORWARD_SPEED = 50;            // Set the value between 0 and 255
-const int BACKWARD_SPEED = 30;           // Set the value between 0 and 255
+const int FORWARD_SPEED = 255;           // Set the value between 0 and 255
+const int BACKWARD_SPEED = 255;          // Set the value between 0 and 255
 const int DISTANCE_LOWER_BOUNDARY = 4;   // Set the lower boundary between the drone and the obstacle
 const int DISTANCE_UPPER_BOUNDARY = 20;  // Set the upper boundary between the drone and the obstacle
 
@@ -30,8 +30,16 @@ void setup() {
 
 // ******************************************************************************************************
 void loop() {
-  distance_measurement();
+  // distance_measurement();
   // distance_maintaining_logic();
+  forward();
+  delay(2000);
+  backward();
+  delay(2000);
+  left_spin();
+  delay(2000);
+  right_spin();
+  delay(2000);
 }
 // ******************************************************************************************************
 
@@ -41,8 +49,8 @@ void forward() {
   // Function that moves the robot forward
   analogWrite(LEFT_MOTOR_PIN_A, FORWARD_SPEED);
   digitalWrite(LEFT_MOTOR_PIN_B, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN_A, LOW);
-  analogWrite(RIGHT_MOTOR_PIN_B, FORWARD_SPEED);
+  analogWrite(RIGHT_MOTOR_PIN_A, FORWARD_SPEED);
+  digitalWrite(RIGHT_MOTOR_PIN_B, LOW);
 }
 
 // ******************************************************************************************************
@@ -115,3 +123,4 @@ void distance_maintaining_logic() {
     STOP();
   }
 }
+
