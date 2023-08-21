@@ -105,6 +105,19 @@ However, sometimes we DO need to make instance change in voltage across the moto
 
 Figure 1.84 shows a good example of the flyback diode. This basically gives the vague idea of where the diode should be in the H bridge. Do consider about the motor works in both polarity so in total of 4 diodes is needed to fully protect the transistors not being blown up by the motor’s inductive kick.
 
+### Little catch, Does the motor really work?
+
+I have tested the motor with quite optimistic mindset for a bit, and found out it cannot drive the drone rather easily.
+
+While the motor can perform well in empty load, it does not drive the wheel (which is around 20g of PLA print) that well. One reason is the small motor I used in this project is not designed to have great torque to drive heavy load. According to the datasheet shown below, it drives approximately 10g-cm torque, which is definitely a small value for driving the drone which have the total weight around 500g.
+
+![motor's datasheet](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/6b51f472-45f1-42ae-9cbf-8c80952fe2e9)
+
+While if I can use a continuous servo motor, the torque it can provide is much more greater, which can potentially provide better drivability for this project. A typical SG90 microservo can provide around 2.5kg-cm torque, which is **much** bigger (250 times) than the motor that is mentioned previously. The datasheet for the SG90 servo motor is shown below;
+![microservo's tatsheet](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/3953880c-ab2f-4ca1-bcb9-a18ecd7f14c2)
+
+The microservo achieves that by applying gearbox inside the structure which by using small gear ratio, to increase the torque while reduce the speed. In this specific application, we don't need extremely fast spin of the motor (we are not making a fan or a prepeller anyway), but we need generaous amount of torque to drive it forward. That is one reason why I decided to change the motor into microservo (which also saves plenty of breadboard space from the H bridge that is mentioned above).
+
 ## Obstacle avoiding logic
 
 In order to make the robot avoid obstacle, we need some sort of sensor that can be used to detect the distance between the robot and the surrounding. For this specific use case, the following sensor can be chosen:
@@ -118,6 +131,7 @@ In order to make the robot avoid obstacle, we need some sort of sensor that can 
     - adaptive scanning (sounds cool)
 
 In this documentation, I will focus on the ultrasonic sensor one, because the sensor is readily available in my university lab and I had past experience with that. In the future, I might consider using LiDAR and according to GreatScott, it is definitely doable and it can give much more accurate control (just look at the commercial sweeping robot, they use LiDAR to avoid obstacle, meanwhile, map the room)
+
 
 ### Basics of ultrasonic sensor
 
