@@ -116,7 +116,7 @@ While the motor can perform well in empty load, it does not drive the wheel (whi
 While if I can use a continuous servo motor, the torque it can provide is much more greater, which can potentially provide better drivability for this project. A typical SG90 microservo can provide around 2.5kg-cm torque, which is **much** bigger (250 times) than the motor that is mentioned previously. The datasheet for the SG90 servo motor is shown below;
 ![microservo's tatsheet](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/3953880c-ab2f-4ca1-bcb9-a18ecd7f14c2)
 
-The microservo achieves that by applying gearbox inside the structure which by using small gear ratio, to increase the torque while reduce the speed. In this specific application, we don't need extremely fast spin of the motor (we are not making a fan or a prepeller anyway), but we need generaous amount of torque to drive it forward. That is one reason why I decided to change the motor into microservo (which also saves plenty of breadboard space from the H bridge that is mentioned above).
+The microservo achieves that by applying gearbox inside the structure which by using small gear ratio, to increase the torque while reduce the speed. In this specific application, we don't need extremely fast spin of the motor (we are not making a fan or a propeller anyway), but we need generaous amount of torque to drive it forward. That is one reason why I decided to change the motor into microservo (which also saves plenty of breadboard space from the H bridge that is mentioned above).
 
 ## Obstacle avoiding logic
 
@@ -171,3 +171,8 @@ void distance_measurement() {
     }
   }
 ```
+
+According to my test, the ultrasonic sensor's readout is quite accurate. However, it does have some artifacts when the distance between the obstacle and the ultrasonic sensor is too close, which is why I put it around 2 or 3 centimeters inside of the drone to avoid the artifacts happens. The range of the ultrasonic sensor is from 2cm to 1 metre.
+![ultrasonic measurement](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/4b448ac3-db85-401b-926f-2ba5b47ded67)
+
+
