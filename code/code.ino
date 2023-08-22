@@ -1,92 +1,106 @@
+// Libraries
+// **************************************************************************************************
+#include <Servo.h>
+Servo leftServo, rightServo;
 // **************************************************************************************************
 // Constants
-const int LEFT_MOTOR_PIN_A = 5;
-const int LEFT_MOTOR_PIN_B = 6;
-const int RIGHT_MOTOR_PIN_A = 9;
-const int RIGHT_MOTOR_PIN_B = 10;
 const int ULTRASONIC_TRIGGER_PIN = 7;
 const int ULTRASONIC_ECHO_PIN = 8;
+const int LEFT_SERVO_PIN = 5;
+const int LEFT_SIGNAL_LIGHT = 6;
+const int RIGHT_SIGNAL_LIGHT = 9;
+const int RIGHT_SERVO_PIN = 10;
+const int FRONT_LED = 11;
+const int LIGHT_SENSOR_PIN = A5;
 // Variables
 float duration_us, distance_cm;
+int light_intensity;
+int leftServoSpeed, rightServoSpeed = 90;
+// According to the datasheet, when inputting 90 the servo should stop. If the servo does not stop
+// at 90, try to calibrate the potentiometer until the servo stop
+int offsetAngle = 0;
 unsigned long startMillis;
 unsigned long currentMillis;
 // **************************************************************************************************
-const int FORWARD_SPEED = 255;           // Set the value between 0 and 255
-const int BACKWARD_SPEED = 255;          // Set the value between 0 and 255
+// User determined values
+const int FORWARD_SPEED = 20;           // Set the value between 0 and 90
+const int BACKWARD_SPEED = 20;          // Set the value between 0 and 90
 const int DISTANCE_LOWER_BOUNDARY = 4;   // Set the lower boundary between the drone and the obstacle
 const int DISTANCE_UPPER_BOUNDARY = 20;  // Set the upper boundary between the drone and the obstacle
 
 void setup() {
   // This part is for setting up the Arduino pins and serial connection, please keep it unchanged
-  pinMode(LEFT_MOTOR_PIN_A, OUTPUT);
-  pinMode(LEFT_MOTOR_PIN_B, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN_A, OUTPUT);
-  pinMode(RIGHT_MOTOR_PIN_B, OUTPUT);
   pinMode(ULTRASONIC_TRIGGER_PIN, OUTPUT);
   pinMode(ULTRASONIC_ECHO_PIN, INPUT);
+  pinMode(LEFT_SIGNAL_LIGHT, OUTPUT);
+  pinMode(RIGHT_SIGNAL_LIGHT, OUTPUT);
+  pinMode(LIGHT_SENSOR_PIN, INPUT);
+  pinMode(FRONT_LED, OUTPUT);
+  leftServo.attach(5);
+  rightServo.attach(10);
   Serial.begin(9600);
   startMillis = millis();
 }
 
 // ******************************************************************************************************
 void loop() {
-  // distance_measurement();
-  // distance_maintaining_logic();
-  forward();
-  delay(2000);
-  backward();
-  delay(2000);
-  left_spin();
-  delay(2000);
-  right_spin();
-  delay(2000);
+  STOP();
+  //   distance_measurement();
+  //   distance_maintaining_logic();
+  light_sensing();
+//    forward();
+//    delay(5000);
+//    backward();
+//    delay(5000);
+//    spin_left();
+//    delay(5000);
+//    spin_right();
+//    delay(5000);
 }
 // ******************************************************************************************************
 
-// Function for the movements
+
+
+
+// Functions for the movement (servo)
 // ******************************************************************************************************
 void forward() {
-  // Function that moves the robot forward
-  analogWrite(LEFT_MOTOR_PIN_A, FORWARD_SPEED);
-  digitalWrite(LEFT_MOTOR_PIN_B, LOW);
-  analogWrite(RIGHT_MOTOR_PIN_A, FORWARD_SPEED);
-  digitalWrite(RIGHT_MOTOR_PIN_B, LOW);
+  leftServo.write(90 - FORWARD_SPEED);
+  rightServo.write(90 + FORWARD_SPEED);
+  digitalWrite(LEFT_SIGNAL_LIGHT, LOW);
+  digitalWrite(RIGHT_SIGNAL_LIGHT, LOW);
 }
 
-// ******************************************************************************************************
 void backward() {
-  // Function that moves the robot backward
-  digitalWrite(LEFT_MOTOR_PIN_A, LOW);
-  analogWrite(LEFT_MOTOR_PIN_B, BACKWARD_SPEED);
-  digitalWrite(RIGHT_MOTOR_PIN_A, LOW);
-  analogWrite(RIGHT_MOTOR_PIN_B, BACKWARD_SPEED);
+  leftServo.write(90 + FORWARD_SPEED);
+  rightServo.write(90 - FORWARD_SPEED);
+  digitalWrite(LEFT_SIGNAL_LIGHT, HIGH);
+  digitalWrite(RIGHT_SIGNAL_LIGHT, HIGH);
 }
 
-// ******************************************************************************************************
-void left_spin() {
-  // Function that makes the robot spin to the left direction
-  digitalWrite(LEFT_MOTOR_PIN_A, LOW);
-  analogWrite(LEFT_MOTOR_PIN_B, FORWARD_SPEED);
-  analogWrite(RIGHT_MOTOR_PIN_A, FORWARD_SPEED);
-  digitalWrite(RIGHT_MOTOR_PIN_B, LOW);
+void spin_left() {
+  leftServo.write(90 - FORWARD_SPEED);
+  rightServo.write(90 - FORWARD_SPEED);
+  digitalWrite(LEFT_SIGNAL_LIGHT, HIGH);
+  digitalWrite(RIGHT_SIGNAL_LIGHT, LOW);
 }
 
-// ******************************************************************************************************
-void right_spin() {
-  // Function that makes the robot spin to the right direction
-  analogWrite(LEFT_MOTOR_PIN_A, FORWARD_SPEED);
-  digitalWrite(LEFT_MOTOR_PIN_B, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN_A, LOW);
-  analogWrite(RIGHT_MOTOR_PIN_B, FORWARD_SPEED);
+void spin_right() {
+  leftServo.write(90 + FORWARD_SPEED);
+  rightServo.write(90 + FORWARD_SPEED);
+  digitalWrite(LEFT_SIGNAL_LIGHT, LOW);
+  digitalWrite(RIGHT_SIGNAL_LIGHT, HIGH);
 }
 
 void STOP() {
-  digitalWrite(LEFT_MOTOR_PIN_A, LOW);
-  digitalWrite(LEFT_MOTOR_PIN_B, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN_A, LOW);
-  digitalWrite(RIGHT_MOTOR_PIN_B, LOW);
+  leftServo.write(90);
+  rightServo.write(90);
+  digitalWrite(LEFT_SIGNAL_LIGHT, HIGH);
+  digitalWrite(RIGHT_SIGNAL_LIGHT, HIGH);
 }
-// ***** Missing left and right turn by setting differential speed ***** //
+
+
+
 
 // ******************************************************************************************************
 void distance_measurement() {
@@ -110,17 +124,31 @@ void distance_measurement() {
   }
 }
 
-// Functions that controls the movement of the robot drone
 // ******************************************************************************************************
+void light_sensing() {
+  if (millis() > currentMillis + 1000) {
+    currentMillis = millis();
+    light_intensity = analogRead(LIGHT_SENSOR_PIN);
+    Serial.println(light_intensity);
+    if (light_intensity < 250) {
+      digitalWrite(FRONT_LED, HIGH);
+      Serial.println("Turn on the front light");
+    } else {
+      digitalWrite(FRONT_LED, LOW);
+    }
+  }
+}
+
+//// Functions that controls the movement of the robot drone
+//// ******************************************************************************************************
 void distance_maintaining_logic() {
   if (distance_cm < 5) {
     backward();
     Serial.println(">>>Going back");
-  } else if (distance_cm > 7) {
+  } else if (distance_cm > 10) {
     forward();
     Serial.println(">>>Going forward");
   } else {
     STOP();
   }
 }
-
