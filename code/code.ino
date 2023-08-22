@@ -23,8 +23,8 @@ unsigned long startMillis;
 unsigned long currentMillis;
 // **************************************************************************************************
 // User determined values
-const int FORWARD_SPEED = 20;           // Set the value between 0 and 90
-const int BACKWARD_SPEED = 20;          // Set the value between 0 and 90
+const int FORWARD_SPEED = 5;           // Set the value between 0 and 90
+const int BACKWARD_SPEED = 5;          // Set the value between 0 and 90
 const int DISTANCE_LOWER_BOUNDARY = 4;   // Set the lower boundary between the drone and the obstacle
 const int DISTANCE_UPPER_BOUNDARY = 20;  // Set the upper boundary between the drone and the obstacle
 
@@ -47,15 +47,11 @@ void loop() {
   STOP();
   //   distance_measurement();
   //   distance_maintaining_logic();
-  light_sensing();
-//    forward();
-//    delay(5000);
-//    backward();
-//    delay(5000);
-//    spin_left();
-//    delay(5000);
-//    spin_right();
-//    delay(5000);
+//  light_sensing();
+//  checkLeft();
+//  delay(1000);
+//  checkRight();
+//  delay(1000);
 }
 // ******************************************************************************************************
 
@@ -121,6 +117,58 @@ void distance_measurement() {
     Serial.print("distance: ");
     Serial.print(distance_cm);
     Serial.println(" cm");
+  }
+}
+
+int checkLeft() {
+  STOP();
+  delay(10);
+  spin_left();
+  delay(500);  // Calibrate this value till when doing one spin, the robot turns to 45 degrees
+  distance_measurement();
+  Serial.print("Distance to the left is: ");
+  Serial.print(distance_cm);
+  Serial.println("cm");
+  return distance_cm;
+}
+
+int checkRight() {
+  STOP();
+  delay(10);
+  spin_right();
+  delay(500);  // Calibrate this value till when doing one spin, the robot turns to 45 degrees
+  distance_measurement();
+  Serial.print("Distance to the right is: ");
+  Serial.print(distance_cm);
+  Serial.println("cm");
+  return distance_cm;
+}
+
+// ******************************************************************************************************
+void obstacle_avoidance_logic() {
+  int distanceLeft, distanceRight;
+  if (distance_cm < DISTANCE_LOWER_BOUNDARY) {
+    
+    backward(); // When the distance is lower than the threshold, going back 
+    delay(500);
+
+    // Measure the left and right distance between the drone and the obstacle, go through the side with lower distance
+    checkLeft();
+    checkRight();
+    distanceLeft = checkLeft();
+    distanceRight = checkRight();
+
+    if (distanceLeft <= distanceRight) {
+      spin_left();
+      delay(100);
+      forward();
+    } else {
+      spin_right();
+      delay(100);
+      forward();
+    }
+  } else {
+    forward(); // When the distance is higher than the threshold, going forward
   }
 }
 
