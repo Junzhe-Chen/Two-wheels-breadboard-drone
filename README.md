@@ -175,4 +175,9 @@ void distance_measurement() {
 According to my test, the ultrasonic sensor's readout is quite accurate. However, it does have some artifacts when the distance between the obstacle and the ultrasonic sensor is too close, which is why I put it around 2 or 3 centimeters inside of the drone to avoid the artifacts happens. The range of the ultrasonic sensor is from 2cm to 1 metre.
 ![ultrasonic measurement](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/4b448ac3-db85-401b-926f-2ba5b47ded67)
 
+Here is a short video footage that shows how the obstacle avoidance function works
+
+https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/eb08e50d-c34c-4a7a-859a-5a402ce13824
+
+
 
