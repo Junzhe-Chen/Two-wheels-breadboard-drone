@@ -197,9 +197,11 @@ The flow chart for my version of obstacle avoidance logic is shown below:
 
 where if the sensor returns the distance value less than the threshold, the robot will first move backward to avoid collision, then checking the left and right distance between the robot and the obstacle, so that it can find the easiest path for it to pass through.
 
-[insert diagram for better explanation here]
+![Obstacle avoidance illustration](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/efe9a08f-7bdb-4ef2-8f69-e340400d9817)
 
-As for the left and right peek, the code is shown below:
+As for the left and right peek, the flow chart and the code is shown below:
+
+![flowchart int checkLeft](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/497fc3b9-21a8-42d0-874a-e67a73317781)
 
 ```cpp
 int checkLeft() {
@@ -218,7 +220,7 @@ int checkLeft() {
 }
 ```
 
-which shows the robot first turns to the front left side, check the distance and turn back to the neutral position. Same thing apply when checking the right side, the only difference will be that the `spin_left()` and `spin_right()` function will be inverted.
+Same thing apply when checking the right side, the only difference will be that the `spin_left()` and `spin_right()` function will be inverted.
 
 ## Final demo
 
