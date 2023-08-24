@@ -175,6 +175,53 @@ void distance_measurement() {
 According to my test, the ultrasonic sensor's readout is quite accurate. However, it does have some artifacts when the distance between the obstacle and the ultrasonic sensor is too close, which is why I put it around 2 or 3 centimeters inside of the drone to avoid the artifacts happens. The range of the ultrasonic sensor is from 2cm to 1 metre.
 ![ultrasonic measurement](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/4b448ac3-db85-401b-926f-2ba5b47ded67)
 
+### Detailed look of obstacle avoidance logic with codes
+
+To avoid the obstacle, we need to know few things:
+
+- What is the threshold distance between the robot and the obstacle when you want the robot to avoid the obstacle?
+- How does the robot determine whether it should turn left or turn right when facing an obstacle?
+
+Which they sounds easy, but is actually a little tricky to implement when considering the limited space this design has.
+
+As we all know for the ultrasonic sensor (which is the sensor chosen for this project), it only returns the distance in the front, but not the distance around the robot. In order to make the robot know the distance on the left and right side of the robot, there are the following few suggestions:
+
+- Adding two more ultrasonic sensor, one on the left and another on the right. you will only have the gut of doing that if you have unlimited funds (Obviously, I am not), as well as plenty of space for the robot, which is not achievable on a small design like this.
+- Mounting the ultrasonic sensor on a servo, making the sensor turn around to check the distance on the left and right hand side of the robot. It works quite like a sweeping radar, which can be quite interesting to make one one day. Unfortunately, there is not enough space for my project to implement this design.
+- Rotating the robot to the left and the right to “peek” the distance. This solution is quite bad as it makes the robot constantly turning around. But due to the limited space for adding more components, this is the only way I can use.
+- Surely there are more solutions other than that, maybe you can come up with better solution than me!
+
+The flow chart for my version of obstacle avoidance logic is shown below:
+
+![Flow chart](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/9fee4f43-ca53-4216-a3a8-4ed64b5650ae)
+
+where if the sensor returns the distance value less than the threshold, the robot will first move backward to avoid collision, then checking the left and right distance between the robot and the obstacle, so that it can find the easiest path for it to pass through.
+
+[insert diagram for better explanation here]
+
+As for the left and right peek, the code is shown below:
+
+```cpp
+int checkLeft() {
+  STOP();
+  delay(10);
+  spin_left();
+  delay(200);  // Calibrate this value till when doing one spin, the robot turns to 45 degrees
+  distance_measurement();
+  spin_right();
+  delay(200); // Spin the robot back after checking left distance
+  STOP();
+  Serial.print(" >>> Distance to the left is: ");
+  Serial.print(distance_cm);
+  Serial.println("cm <<<");
+  return distance_cm;
+}
+```
+
+which shows the robot first turns to the front left side, check the distance and turn back to the neutral position. Same thing apply when checking the right side, the only difference will be that the `spin_left()` and `spin_right()` function will be inverted.
+
+## Final demo
+
 Here is a short video footage that shows how the obstacle avoidance function works
 
 https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/eb08e50d-c34c-4a7a-859a-5a402ce13824
