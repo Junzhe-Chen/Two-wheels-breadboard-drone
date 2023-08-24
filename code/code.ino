@@ -8,8 +8,8 @@ const int ULTRASONIC_TRIGGER_PIN = 7;
 const int ULTRASONIC_ECHO_PIN = 8;
 const int LEFT_SERVO_PIN = 5;
 const int LEFT_SIGNAL_LIGHT = 6;
-const int RIGHT_SIGNAL_LIGHT = 9;
 const int RIGHT_SERVO_PIN = 10;
+const int RIGHT_SIGNAL_LIGHT = 9;
 const int FRONT_LED = 11;
 const int LIGHT_SENSOR_PIN = A5;
 // Variables
@@ -18,15 +18,16 @@ int light_intensity;
 int leftServoSpeed, rightServoSpeed = 90;
 // According to the datasheet, when inputting 90 the servo should stop. If the servo does not stop
 // at 90, try to calibrate the potentiometer until the servo stop
-int offsetAngle = 0;
 unsigned long startMillis;
 unsigned long currentMillis;
 // **************************************************************************************************
 // User determined values
-const int FORWARD_SPEED = 5;           // Set the value between 0 and 90
-const int BACKWARD_SPEED = 5;          // Set the value between 0 and 90
-const int DISTANCE_LOWER_BOUNDARY = 4;   // Set the lower boundary between the drone and the obstacle
+const int FORWARD_SPEED = 10;           // Set the value between 0 and 90
+const int BACKWARD_SPEED = 10;          // Set the value between 0 and 90
+const int DISTANCE_LOWER_BOUNDARY = 15;   // Set the lower boundary between the drone and the obstacle
 const int DISTANCE_UPPER_BOUNDARY = 20;  // Set the upper boundary between the drone and the obstacle
+const int OFFSET_ANGLE = 200;
+
 
 void setup() {
   // This part is for setting up the Arduino pins and serial connection, please keep it unchanged
@@ -44,14 +45,10 @@ void setup() {
 
 // ******************************************************************************************************
 void loop() {
-  STOP();
-  //   distance_measurement();
-  //   distance_maintaining_logic();
-//  light_sensing();
-//  checkLeft();
-//  delay(1000);
-//  checkRight();
-//  delay(1000);
+
+  obstacle_avoidance_logic();
+  light_sensing();
+
 }
 // ******************************************************************************************************
 
@@ -124,11 +121,12 @@ int checkLeft() {
   STOP();
   delay(10);
   spin_left();
-  delay(500);  // Calibrate this value till when doing one spin, the robot turns to 45 degrees
+  delay(200);  // Calibrate this value till when doing one spin, the robot turns to 45 degrees
+  STOP();
   distance_measurement();
-  Serial.print("Distance to the left is: ");
+  Serial.print(" >>> Distance to the left is: ");
   Serial.print(distance_cm);
-  Serial.println("cm");
+  Serial.println("cm <<<");
   return distance_cm;
 }
 
@@ -136,40 +134,51 @@ int checkRight() {
   STOP();
   delay(10);
   spin_right();
-  delay(500);  // Calibrate this value till when doing one spin, the robot turns to 45 degrees
+  delay(200);  // Calibrate this value till when doing one spin, the robot turns to 45 degrees
+  STOP();
   distance_measurement();
-  Serial.print("Distance to the right is: ");
+  Serial.print(" >>> Distance to the right is: ");
   Serial.print(distance_cm);
-  Serial.println("cm");
+  Serial.println("cm <<<");
   return distance_cm;
 }
 
 // ******************************************************************************************************
 void obstacle_avoidance_logic() {
   int distanceLeft, distanceRight;
-  if (distance_cm < DISTANCE_LOWER_BOUNDARY) {
+  distance_measurement();
+  if (distance_cm <= DISTANCE_LOWER_BOUNDARY) {
     
     backward(); // When the distance is lower than the threshold, going back 
-    delay(500);
+    delay(200);
 
     // Measure the left and right distance between the drone and the obstacle, go through the side with lower distance
     checkLeft();
     checkRight();
     distanceLeft = checkLeft();
     distanceRight = checkRight();
+    STOP();
+    delay(200);
 
     if (distanceLeft <= distanceRight) {
-      spin_left();
+      // When left distance is less than right distance, that means there is a gap at left, turn left and go straight
+      spin_right();
+      delay(OFFSET_ANGLE);
+      STOP();
       delay(100);
       forward();
     } else {
-      spin_right();
+      // When left distance is more than right distance, that means there is a gap at right, turn right and go straight
+      spin_left();
+      delay(OFFSET_ANGLE);
+      STOP();
       delay(100);
       forward();
     }
   } else {
     forward(); // When the distance is higher than the threshold, going forward
   }
+  delay(100);
 }
 
 // ******************************************************************************************************
@@ -190,10 +199,10 @@ void light_sensing() {
 //// Functions that controls the movement of the robot drone
 //// ******************************************************************************************************
 void distance_maintaining_logic() {
-  if (distance_cm < 5) {
+  if (distance_cm < 8) {
     backward();
     Serial.println(">>>Going back");
-  } else if (distance_cm > 10) {
+  } else if (distance_cm > 12) {
     forward();
     Serial.println(">>>Going forward");
   } else {
