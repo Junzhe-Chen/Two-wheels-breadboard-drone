@@ -219,4 +219,8 @@ Here is a short video footage that shows how the obstacle avoidance function wor
 https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/eb08e50d-c34c-4a7a-859a-5a402ce13824
 
 
+https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/567b752f-4811-47c2-9ad0-6a304c2c7772
+
+
+
 
