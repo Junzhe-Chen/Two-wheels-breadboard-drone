@@ -1,5 +1,5 @@
 # Before you read
-**This document is still in the early development stage, we will keep updating and hopefully finish the first iteration of this project before next week**
+**This document is 80% complete, I will add more details when I got the time**
 
 **Junzhe Chen**
 
@@ -48,62 +48,7 @@ One of the objective of the project is to make the robot
 - can avoid obstacle (if there is a obstacle in the front of the robot, it should be able to go around and pass it)
 - having the lighting in the front which can be turned on and off by the Arduino
 
-## Motor control
-
-DC motor is relatively easy to control, if you provide the rated voltage across it, it will spin. If you switch the direction, it will spin in the opposite direction. However, there are few things that need to be taking care off
-
-- DC motor is an inductive load, the inductive voltage kick might destroy the control circuit
-    - Flyback diode connecting in parallel with the motor
-- DC motor can only be powered properly under rated voltage (in this case, 5V). If the motor is powered below 5V, it might not be able to spin properly
-    - Controlling the motor speed by PWM, I have written an [article](https://github.com/Junzhe-Chen/PWM-Modulator-Circuit) about that, check for further detail
-- A circuit is required to determine which direction the motor would need to spin
-    - H bridge circuit (in the next session) [insert picture]
-
-### Working principle of H bridge
-
-H bridge is a useful circuit that can change the polarity of the component connecting in the middle of the bridge. [insert many figures and explanations]
-
-H bridge driver
-![H bridge overview](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/52ffa30f-411e-4416-baa6-a3185be22bc6)
-
-H bridge, M1 and M4 conducting
-![H bridge case 1](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/e42908ea-c051-4bfc-aaef-6c575560ac44)
-
-H bridge, M2 and M3 conducting
-![H bridge case 2](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/8841472c-6fc0-4e51-8571-71b0ba703bf7)
-
-H bridge, STOP
-![H bridge case STOP](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/67e44c97-c2d9-426a-9515-2d747f8d9e9d)
-
-H bridge with potection diode
-![H bridge flyback diode](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/a7cf1098-ed70-4a7f-9c05-377c38c7f392)
-
-| A    | B    | Direction     |
-|------|------|---------------|
-| LOW  | LOW  | BRAKE         |
-| LOW  | HIGH | CLOCKWISE     |
-| HIGH | LOW  | ANTICLOCKWISE |
-| HIGH | HIGH | BRAKE         |
-
-
-### Inductor “kick” and flyback diode
-
-Inductor is a quite interesting component, which when a current passing through it, magnetic field around the inductor began to build up. If there is a sudden change of current such as suddenly cutting off the voltage across the inductor, the magnetic field will collapse and turn it into current. The fundamental principle for inductor can be quite hard to explain, for the math fan here, the current voltage relationship on a inductor can be written as  
-
-$$
-v_L=L\frac{di_L}{dt}
-$$
-
-It can be understood as inductor doesn’t like sudden change, in another word, resists change. If you apply sudden change to an inductor, it will kick you back really REALLY hard. There is actually a law that define this characteristics called [Lenz’s Law](https://en.wikipedia.org/wiki/Lenz%27s_law).
-
-However, sometimes we DO need to make instance change in voltage across the motor (which is mainly inductive), then where should those kickback voltage go? That is when the use of Flyback diode comes in. The following picture from *Art of Electronics* gives a intuitive explanation of why we need a flyback diode for inductive load:
-
-![flyback diode art of electronics](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/25933043-e56f-4ef5-8909-7fe1270b7b2f)
-
-> When the switch is opened, the inductor tries to keep current flowing from A to B, as it had been. In other words, it tries to make current flow out of B, which it does by forcing B to a high positive voltage (relative to A). In a case like this, in which there’s no connection to terminal B, it may go 1000 V positive before the switch contact “blows over.” This shortens the life of the switch and also generates impulsive interference that may affect other circuits nearby. If the switch happens to be a transistor, it would be an understatement to say that its life is shortened; its life is ended. Horowitz, Paul *Art of Electronics, p.39*
->
-
-Figure 1.84 shows a good example of the flyback diode. This basically gives the vague idea of where the diode should be in the H bridge. Do consider about the motor works in both polarity so in total of 4 diodes is needed to fully protect the transistors not being blown up by the motor’s inductive kick.
+## Movement control
 
 ### Little catch, Does the motor really work?
 
@@ -114,10 +59,34 @@ While the motor can perform well in empty load, it does not drive the wheel (whi
 ![motor's datasheet](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/6b51f472-45f1-42ae-9cbf-8c80952fe2e9)
 
 While if I can use a continuous servo motor, the torque it can provide is much more greater, which can potentially provide better drivability for this project. A typical SG90 microservo can provide around 2.5kg-cm torque, which is **much** bigger (250 times) than the motor that is mentioned previously. The datasheet for the SG90 servo motor is shown below;
-![microservo's tatsheet](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/3953880c-ab2f-4ca1-bcb9-a18ecd7f14c2)
+![microservo's datasheet](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/3953880c-ab2f-4ca1-bcb9-a18ecd7f14c2)
 
 The microservo achieves that by applying gearbox inside the structure which by using small gear ratio, to increase the torque while reduce the speed. In this specific application, we don't need extremely fast spin of the motor (we are not making a fan or a propeller anyway), but we need generaous amount of torque to drive it forward. That is one reason why I decided to change the motor into microservo (which also saves plenty of breadboard space from the H bridge that is mentioned above).
 
+### Working principle of the microservo
+
+There are two types of microservo, one is those you can control the angle it turns between e.g. 0 and $180^\circ$, which is often used in the scenario where precision is the key. One good example of this type of microservo is [SG90](https://www.amazon.co.uk/s?k=sg90+servos&adgrpid=1185274432612636&hvadid=74079856314371&hvbmt=be&hvdev=c&hvlocphy=41471&hvnetw=o&hvqmt=e&hvtargid=kwd-74079786240109%3Aloc-188&hydadcr=14882_2226115&tag=mh0a9-21&ref=pd_sl_5ybxull069_e)
+
+However, in this project, the key is to make the wheel moving constantly. In this case, we should consider using a continuous microservo. The working mechanism of those servo motor is when you give a short pulse duration (for example, 0.5ms), it will rotate in one direction; When you apply a longer pulse (for example, 1.5ms), it will rotate in the opposite direction. This satisfies the bare minimum requirements for making a movement control for a two wheel drone, as it should be sufficient with forward and backward motion with controllable speed. A typical continuous servomotor is [FS90R](https://www.rapidonline.com/Feetech-FS90R-360-Continuous-Rotation-Micro-Servo-37-1335?incVat=1&pdg=pla-4584070144863153:cmp-374690294:adg-1287528427140489:crv-:pos-:dev-c&msclkid=7fbfc0fe02f31d7be1caa41698b6734e&utm_source=bing&utm_medium=cpc&utm_campaign=Bing%20-%20UK%20-%20Shopping%20-%20Generic&utm_term=4584070144863153&utm_content=Shopping%20-%20Desktop%20-%20New%20feed)
+
+in the Arduino library, we can include the servo header file, which provide the way to control most servo on the market. In my case, I am using the FS90R continuous microservo for my drone's movement. By using the header file, if I do `servo.write(90);` to my servo, it will stop and stay at neutral position. If I make the value smaller, it will constantly spin at one direction and same thing happen if I make the value bigger than 90, but the direction will be inverted. 
+
+However, please take note that when we mount the motor to the breadboard, the two motor will be mirror to each other. Which means if both microservo have the same input (for example, `leftServo.write(80);` and `rightServo.write(80);` as the servo input), it will not go straight, but make the drone spin. In order to make the drone move forward, it should write the following:
+
+```c++
+void forward() {
+  leftServo.write(90 - FORWARD_SPEED);
+  rightServo.write(90 + FORWARD_SPEED);
+}
+```
+
+But if I want the drone to spin around, I should write give the microservo the same input, like what is shown below:
+```c++
+void spin_left() {
+  leftServo.write(90 - FORWARD_SPEED);
+  rightServo.write(90 - FORWARD_SPEED);
+}
+```
 
 ## Choosing the battery
 
