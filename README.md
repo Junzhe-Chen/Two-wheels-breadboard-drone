@@ -118,6 +118,27 @@ While if I can use a continuous servo motor, the torque it can provide is much m
 
 The microservo achieves that by applying gearbox inside the structure which by using small gear ratio, to increase the torque while reduce the speed. In this specific application, we don't need extremely fast spin of the motor (we are not making a fan or a propeller anyway), but we need generaous amount of torque to drive it forward. That is one reason why I decided to change the motor into microservo (which also saves plenty of breadboard space from the H bridge that is mentioned above).
 
+
+## Choosing the battery
+
+Interestingly, choosing the suitable battery for this project is the most time-consuming thing for me. The challenge in this part is to find a battery that can supply high current without too much voltage drop. The following picture shows that when the wheel is changing the direction, it will require high current up to around 0.8A to 1A. 
+
+![Current](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/1feaaa3d-713c-4857-875a-7fe22f6d746b)
+
+One interesting thing is when the battery is drawing too much current, the battery voltage will decrease a lot. The unfortunate truth is if the supply voltage run below 4V for the Arduino, the Arduino will turn off, therefore the program will not run. 
+
+Initially, I used the 1604S 9V battery as it marked “super heavy duty”, but it turned out not as that “heavy duty”. When driving the battery with 1A of current, the voltage quickly dropped down below 1V. After reviewing the [datasheet](https://www.farnell.com/datasheets/612533.pdf) for that battery, it shows that the main focus for the battery is longevity, as it will last quite a long time compare with other 9V battery. The battery that I chose for my project is 1604A (the golden one shown below) which has better current drivability and it is designed to handle high current. 
+
+![Batteries](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/659cc9fb-961e-40fd-9f41-a0d6f3378aba)
+
+
+As it said in the introduction page at [Farnell](https://uk.farnell.com/gp-batteries/gp1604-10/battery-alkaline-pp3-pk10/dp/5057050):
+
+> High power, long-life alkaline PP3 batteries giving up to six times the life of ordinary zinc carbon batteries; ideal for high drain applications
+> 
+
+which turned out to be good enough for this project.
+
 ## Obstacle avoiding logic
 
 In order to make the robot avoid obstacle, we need some sort of sensor that can be used to detect the distance between the robot and the surrounding. For this specific use case, the following sensor can be chosen:
