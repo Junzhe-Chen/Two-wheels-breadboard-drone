@@ -22,9 +22,9 @@ unsigned long startMillis;
 unsigned long currentMillis;
 // **************************************************************************************************
 // User determined values
-const int FORWARD_SPEED = 10;           // Set the value between 0 and 90
-const int BACKWARD_SPEED = 10;          // Set the value between 0 and 90
-const int DISTANCE_LOWER_BOUNDARY = 15;   // Set the lower boundary between the drone and the obstacle
+const int FORWARD_SPEED = 10;            // Set the value between 0 and 90
+const int BACKWARD_SPEED = 10;           // Set the value between 0 and 90
+const int DISTANCE_LOWER_BOUNDARY = 15;  // Set the lower boundary between the drone and the obstacle
 const int DISTANCE_UPPER_BOUNDARY = 20;  // Set the upper boundary between the drone and the obstacle
 const int OFFSET_ANGLE = 200;
 
@@ -48,7 +48,7 @@ void loop() {
 
   obstacle_avoidance_logic();
   light_sensing();
-
+  // forward();
 }
 // ******************************************************************************************************
 
@@ -58,15 +58,19 @@ void loop() {
 // Functions for the movement (servo)
 // ******************************************************************************************************
 void forward() {
-  leftServo.write(90 - FORWARD_SPEED);
-  rightServo.write(90 + FORWARD_SPEED);
+  // leftServo.write(90 - FORWARD_SPEED);
+  // rightServo.write(90 + FORWARD_SPEED);
+  leftServo.write(83);
+  rightServo.write(100);
   digitalWrite(LEFT_SIGNAL_LIGHT, LOW);
   digitalWrite(RIGHT_SIGNAL_LIGHT, LOW);
 }
 
 void backward() {
-  leftServo.write(90 + FORWARD_SPEED);
-  rightServo.write(90 - FORWARD_SPEED);
+  // leftServo.write(90 + FORWARD_SPEED);
+  // rightServo.write(90 - FORWARD_SPEED);
+  leftServo.write(100);
+  rightServo.write(83);
   digitalWrite(LEFT_SIGNAL_LIGHT, HIGH);
   digitalWrite(RIGHT_SIGNAL_LIGHT, HIGH);
 }
@@ -122,8 +126,10 @@ int checkLeft() {
   delay(10);
   spin_left();
   delay(200);  // Calibrate this value till when doing one spin, the robot turns to 45 degrees
-  STOP();
   distance_measurement();
+  spin_right();
+  delay(200);  // Spin the robot back after checking left distance
+  STOP();
   Serial.print(" >>> Distance to the left is: ");
   Serial.print(distance_cm);
   Serial.println("cm <<<");
@@ -148,8 +154,8 @@ void obstacle_avoidance_logic() {
   int distanceLeft, distanceRight;
   distance_measurement();
   if (distance_cm <= DISTANCE_LOWER_BOUNDARY) {
-    
-    backward(); // When the distance is lower than the threshold, going back 
+
+    backward();  // When the distance is lower than the threshold, going back
     delay(200);
 
     // Measure the left and right distance between the drone and the obstacle, go through the side with lower distance
@@ -176,14 +182,15 @@ void obstacle_avoidance_logic() {
       forward();
     }
   } else {
-    forward(); // When the distance is higher than the threshold, going forward
+    forward();  // When the distance is higher than the threshold, going forward
   }
   delay(100);
 }
 
 // ******************************************************************************************************
 void light_sensing() {
-  if (millis() > currentMillis + 1000) {
+  Serial.println("light sensing debug");
+  if (millis() > currentMillis + 100) {
     currentMillis = millis();
     light_intensity = analogRead(LIGHT_SENSOR_PIN);
     Serial.println(light_intensity);
