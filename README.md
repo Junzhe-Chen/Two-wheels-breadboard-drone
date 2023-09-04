@@ -5,6 +5,13 @@
 
 **17th Aug. 2023**
 
+**To-do listL:**
+
+**Add circuit diagram for the breadboard**
+
+**Add BoM**
+
+**Fix the grammar**
 
 # Overview
 
