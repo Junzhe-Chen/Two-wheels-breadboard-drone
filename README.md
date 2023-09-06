@@ -5,9 +5,7 @@
 
 **17th Aug. 2023**
 
-**To-do listL:**
-
-**Add circuit diagram for the breadboard**
+**To-do list:**
 
 **Add BoM**
 
@@ -231,7 +229,14 @@ The **circuit diagram** of the breadboard is shown below, I use [TinkerCAD](www.
 
 ![Breadboard diagram](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/9c22b42d-8faa-41b5-9e26-340471e590be)
 
+## Few notices and common mistakes
 
+**Please check the following if your robot does not work, it might save you a day!**
+
+1. The battery ground should share with the Arduino ground, if there are not sharing the same ground, the Arduino will be put in the floating state, therefore the voltage reference will not be accurate
+2. Careful with your connection of the switch, the left and middle pin should connect to the positive Vin of the Arduino and the positive wire (red wire of the PP3) of the 9V battery. The negative input of the Arduino should not be connected to the switch. If the negative input is connected, when the switch is closed, it will **short** out the Arduino **which will make your unable to download, even worse, destroy your Arduino!**
+3. When connecting the cable to the Arduino pin socket, make sure to make the sharp bend. This ensures good connection to the Arduino. You might encounter the robot behaves weirdly and ultrasonic sensor is constantly reading zero, this is usually caused by loose connection between Arduino and ultrasonic sensor
+4. You may need to calibrate the microservo more or less. If the microservo does not stop given `servo.Write(90)`, spin the potentiometer at the back of the servo until its stops. Also, the speed of the left and right servo should be calibrated to the same, that makes the robot traveling straight when moving forward
 
 
 
