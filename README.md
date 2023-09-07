@@ -221,9 +221,7 @@ Same thing apply when checking the right side, the only difference will be that 
 
 Here is a short video footage that shows how the obstacle avoidance function works
 
-https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/eb08e50d-c34c-4a7a-859a-5a402ce13824
-
-https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/b756a737-08ee-4902-a92b-56e6c9a67997
+https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/749089a3-922f-4cfe-97b0-32ad5c9f485c
 
 The **circuit diagram** of the breadboard is shown below, I use [TinkerCAD](www.tinkercad.com) to create it.
 
