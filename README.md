@@ -1,15 +1,4 @@
-# Before you read
-**This document is 80% complete, I will add more details when I got the time**
 
-**Junzhe Chen**
-
-**17th Aug. 2023**
-
-**To-do list:**
-
-**Add BoM**
-
-**Fix the grammar**
 
 # Overview
 
