@@ -214,7 +214,8 @@ https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/7490
 
 The **circuit diagram** of the breadboard is shown below, I use [TinkerCAD](www.tinkercad.com) to create it.
 
-![Breadboard diagram](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/9c22b42d-8faa-41b5-9e26-340471e590be)
+![Breadboard diagram]![image](https://github.com/Junzhe-Chen/Two-wheels-breadboard-drone/assets/141964509/dc87c9af-96ab-4d9d-8f81-803f729238d0)
+)
 
 ## Few notices and common mistakes
 
